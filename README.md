@@ -64,6 +64,24 @@ The budget alert script creates Azure Monitor actions and cost alerts so you get
 6. Use the scaling and budget scripts to keep costs controlled.
 7. Store all per-server config in this GitHub repo and sync changes to the VM.
 
+## Local environment variables
+Keep all real secret values in a local file or shell environment instead of committing them to the repo.
+
+Example local config:
+
+```powershell
+$env:DUNE_RESOURCE_GROUP = 'dune-awakening-rg'
+$env:DUNE_LOCATION = 'eastus'
+$env:DUNE_VM_NAME = 'dune-awakening-server'
+$env:DUNE_VM_ADMIN_USERNAME = 'duneadmin'
+$env:DUNE_VM_ADMIN_PASSWORD = 'ReplaceWithStrongPassword!123'
+$env:AZURE_SUBSCRIPTION_ID = '<subscription-id>'
+$env:DUNE_BUDGET_AMOUNT = '150'
+$env:DUNE_ALERT_EMAIL = 'you@example.com'
+```
+
+You can also save these in a `.env` file and load them with a shell that supports it.
+
 ## GitHub secrets needed
 - `AZURE_CLIENT_ID`
 - `AZURE_TENANT_ID`
@@ -75,11 +93,11 @@ The budget alert script creates Azure Monitor actions and cost alerts so you get
 - `AZURE_LOCATION`
 
 ## Azure deployment
-Use the included deployment script:
+Use the included deployment script with environment variables or explicit parameters:
 
 ```powershell
 cd scripts
-./deploy-azure.ps1 -ResourceGroupName dune-awakening-rg -Location "eastus" -VmName dune-awakening-server -AdminUsername youruser
+./deploy-azure.ps1 -ResourceGroupName $env:DUNE_RESOURCE_GROUP -Location $env:DUNE_LOCATION -VmName $env:DUNE_VM_NAME -AdminUsername $env:DUNE_VM_ADMIN_USERNAME -AdminPassword $env:DUNE_VM_ADMIN_PASSWORD
 ```
 
 ## Scale the server VM
