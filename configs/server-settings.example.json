@@ -1,0 +1,18 @@
+{
+  "serverName": "My Dune Private Server",
+  "maxPlayers": 8,
+  "passwordProtected": true,
+  "joinPassword": "CHANGE_ME",
+  "adminPlayers": [
+    "SteamOrPlatformUserId_1",
+    "SteamOrPlatformUserId_2"
+  ],
+  "saveDirectory": "C:/DuneAwakeningServer/Saves",
+  "logDirectory": "C:/DuneAwakeningServer/Logs",
+  "network": {
+    "port": 7777,
+    "queryPort": 27015,
+    "advertisePublic": true
+  },
+  "notes": "Replace this file with the official server config format used by the game publisher. Keep secrets out of Git history and use env-based injection if supported."
+}

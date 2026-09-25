@@ -1,0 +1,53 @@
+name: Azure Deploy
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ main ]
+    paths:
+      - 'infrastructure/**'
+      - 'configs/**'
+      - 'scripts/**'
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          creds: ${{ secrets.AZURE_CREDENTIALS }}
+
+      - name: Deploy Bicep template
+        uses: azure/arm-deploy@v2
+        with:
+          scope: resourcegroup
+          subscriptionId: ${{ secrets.AZURE_SUBSCRIPTION_ID }}
+          resourceGroupName: ${{ secrets.AZURE_RESOURCE_GROUP }}
+          template: infrastructure/bicep/main.bicep
+          parameters: >
+            adminUsername=${{ secrets.VM_ADMIN_USERNAME }}
+            adminPassword=${{ secrets.VM_ADMIN_PASSWORD }}
+            vmName=${{ secrets.VM_NAME }}
+            location=${{ secrets.AZURE_LOCATION }}
+
+      - name: Upload config files to VM
+        shell: bash
+        env:
+          VM_HOST: ${{ secrets.VM_HOST }}
+          VM_USER: ${{ secrets.VM_ADMIN_USERNAME }}
+          VM_PASSWORD: ${{ secrets.VM_ADMIN_PASSWORD }}
+        run: |
+          python3 - <<'PY'
+          import os, sys
+          host = os.environ['VM_HOST']
+          user = os.environ['VM_USER']
+          pw = os.environ['VM_PASSWORD']
+          print(f"This workflow is ready to upload configs to {host}.")
+          print("For a production deployment, add a secure copy step using WinRM or an Azure VM extension.")
+          print("Keep the official game server configuration in Git and push it to the host after install.")
+          PY
